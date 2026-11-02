@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#783944"/><circle cx="32" cy="32" r="22" fill="none" stroke="#e4c79a" stroke-width="1.5"/><text x="32" y="41" font-family="Georgia,serif" font-size="30" text-anchor="middle" font-style="italic" fill="#fff6ea">B</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<rect width="64" height="64" rx="15" fill="#732e3b"/>
+<rect x="6" y="6" width="52" height="52" rx="11" fill="#f8e8d0"/>
+<path d="M15 31h34M21 25h22M27 18h10M32 14v5M25 26v5M39 26v5M19 32v13M45 32v13M25 33v12M39 33v12M30 37h4v8M13 45h38" stroke="#772d3b" stroke-width="3.8" stroke-linecap="round" fill="none"/>
+<path d="M42 47q5-12 11-7q5 6-11 7M42 47q-2-10-8-8q-5 5 8 8" fill="#dfa835" stroke="#bc8329" stroke-width=".8"/>
+</svg>
