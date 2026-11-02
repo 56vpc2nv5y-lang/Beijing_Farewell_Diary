@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f5f0e6" />
+<meta name="description" content="把北京的秋天，收进下一程。离职倒计时、可编辑日历、秋日出行和私人日记，全部保存在本地浏览器。" />
+<title>Beijing Farewell Diary · 北京告别日记与赏秋攻略</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<canvas id="fireworks" aria-hidden="true"></canvas>
+<header class="header"><div class="container header-inner">
+  <a href="#top" class="brand" aria-label="回到顶部"><div class="brand-icon">B.</div><div><div class="brand-name">Beijing Farewell Diary</div><div class="brand-sub">A LITTLE BOOK OF NEW BEGINNINGS</div></div></a>
+  <nav class="nav" aria-label="主导航"><a href="#planner">日历计划</a><a href="#routes">秋日路线</a><a href="#guide">完整攻略</a><a href="#memory">照片日记</a><a href="#wishes">心愿清单</a><a class="nav-cta" href="#memory">写下今天 ↗</a></nav>
+</div></header>
+<main class="container main" id="top">
+ <section class="cover-feature" aria-label="北京告别日记封面">
+   <div class="cover-image-wrap">
+      <img class="cover-image" src="./assets/cover.webp" alt="北京告别日记原创封面：夕阳下的北京胡同、银杏、红墙、日历与行李" width="1600" height="901" fetchpriority="high" />
+      <div class="cover-corner-label">AUTUMN NOTES · 2026</div>
+   </div>
+   <div class="cover-bottom">
+     <div class="cover-story"><div class="section-kicker">AN AUTUMN TO REMEMBER</div><h1>把北京的秋天，收进下一程。</h1><p>A soft goodbye, a beautiful beginning. 银杏、胡同、夕阳，以及属于自己的时间。</p></div>
+     <div class="cover-actions"><a class="btn" href="#planner">打开离职日历 ↗</a><a class="btn ghost" href="#guide">查看三日攻略 ↗</a><button class="btn subtle" id="celebrateButton" type="button">✷ 放一场小烟花</button></div>
+   </div>
+ </section>
+ <div class="sticker-divider" aria-hidden="true"><img src="./assets/sticker-leaf.webp" alt="" loading="lazy"/><span>THE LAST GOLDEN DAYS IN BEIJING</span><img src="./assets/sticker-ticket.webp" alt="" loading="lazy"/></div>
+ <section class="dashboard" aria-label="离职倒计时和完成进度">
+  <div class="stat-card countdown-card"><div><div class="card-label">COUNTDOWN TO A NEW CHAPTER</div><div class="count-line"><strong class="count-number" id="daysLeft">10</strong><span class="count-unit" id="daysUnit">天</span></div></div><div class="count-explainer" id="countExplain">距离 11 月 9 日，新的开始</div></div>
+  <div class="stat-card"><div class="stat-head"><div class="card-label">DAILY LITTLE WINS</div><div class="mini-icon">↗</div></div><div><div class="stat-value" id="taskStat">0 / 0</div><div class="stat-text">已完成的待办事项</div><div class="progress-bar"><div class="progress-fill" id="taskProgress" style="width:0%"></div></div></div></div>
+  <div class="stat-card"><div class="stat-head"><div class="card-label">COLLECTED MOMENTS</div><div class="mini-icon">✺</div></div><div><div class="stat-value" id="momentsStat">0</div><div class="stat-text"><span id="wishStat">0 / 6</span> 项心愿已实现 · <span id="photoStat">0</span> 张照片</div><div class="progress-bar"><div class="progress-fill" id="wishProgress" style="width:0%"></div></div></div></div>
+ </section>
+ <section class="verse"><span>“</span><p id="dailyQuote">这一程的意义，不止是到达。也包括你终于肯为自己停下来，看一看秋天。</p><small>ONE NOTE A DAY · 每日一言</small></section>
+ <section id="planner"><div class="section-head"><div><div class="section-kicker">01 / THE LITTLE PLAN</div><h2>日子，也值得好好安排。</h2></div><div class="section-note">选一天 → 勾选、编辑、添加任务<br>所有修改都会自动保存在此浏览器</div></div>
+  <div class="planner">
+   <div class="panel calendar-panel"><div class="month-head"><div class="month-left"><h3 id="monthTitle">November 2026</h3><small id="monthSub">深秋日历</small></div><div class="month-buttons"><button type="button" class="iconbtn" id="prevMonth" title="上个月" aria-label="上个月">‹</button><button type="button" class="iconbtn" id="todayButton" title="回到今天" aria-label="回到今天">⌂</button><button type="button" class="iconbtn" id="nextMonth" title="下个月" aria-label="下个月">›</button></div></div>
+    <div class="weekdays" aria-hidden="true"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div><div class="month-grid" id="monthGrid" role="group" aria-label="月份日历"></div>
+    <div class="calendar-foot"><span class="legend"><i class="dot special"></i>特别时刻</span><span class="legend"><i class="dot work"></i>工作安排</span><span class="legend"><i class="dot"></i>秋日出行</span><span class="calendar-hint">点选日期查看详细计划 ↗</span></div>
+   </div>
+   <div class="panel day-panel"><div class="day-meta"><div class="date-eyebrow" id="dayLabel">SATURDAY · 31 OCTOBER</div><button class="iconbtn" id="dayAddEvent" title="添加日程" aria-label="添加日程">＋</button></div><h3 class="big-day" id="selectedDateTitle">10月31日 · 周六</h3><div class="day-summary" id="daySubtitle">返京后的第一个下午，留给秋天。</div>
+    <div class="line-heading"><strong>✷ 今天的小任务</strong><small id="dayTaskCounter">0 / 0 完成</small></div><div class="task-items" id="dayTasks"></div>
+    <form class="quick-add" id="quickTaskForm"><label class="sr-only" for="quickTaskInput">添加任务内容</label><input id="quickTaskInput" maxlength="180" placeholder="+ 添加一件想完成的小事…" required/><button aria-label="添加任务" title="添加任务" type="submit">+</button></form>
+    <div class="line-heading"><strong>⌁ 今日行程</strong><button class="text-link" id="editEvents" type="button">添加一个时间点 +</button></div><div class="timeline-mini" id="dayEvents"></div>
+    <div class="day-end"><button class="btn soft" id="writeDay" type="button">✎ 写一页这一天的日记</button></div>
+   </div>
+  </div>
+ </section>
+ <section class="route-section" id="routes"><div class="section-head"><div><div class="section-kicker">02 / STROLLS IN GOLD</div><h2>和北京秋天，好好道别。</h2></div><div class="section-note">三段轻松的城市漫游<br>路线是建议，你随时可以修改</div></div>
+  <div class="route-grid" id="routeGrid"></div><p class="route-guide-prompt">每一条路线都有门票、交通、预约方法、逐站导航与备选方案。 <a href="#guide">打开完整旅行攻略 ↗</a></p>
+ </section>
+
+ <div class="postcard-line" aria-hidden="true"><img src="./assets/sticker-bicycle.webp" alt="" loading="lazy"/><span>Some cities stay with us, long after we leave.</span><img src="./assets/sticker-mug.webp" alt="" loading="lazy"/></div>
+ <section class="guide-section" id="guide" aria-label="北京秋日完整出行攻略">
+  <div class="section-head"><div><div class="section-kicker">03 / THE TRAVEL FIELD GUIDE</div><h2>一份真正能带出门的赏秋攻略。</h2></div><div class="section-note">资料基准：2026年10月30日 · 北京时间<br>票价为通常成人票，实时公告与余票以官方为准</div></div>
+  <div class="guide-intro">
+    <div><span class="eyebrow-guide">BEIJING, BEFORE WE SAY GOODBYE</span><h3 class="zhserif">认真看一场秋天，<br><em>不用匆忙。</em></h3><p>10月31日中午12点出发；11月1日安排完整赏秋；11月8日留给轻松散步与搬家。三天不是必须打卡的KPI，路线随心情而变。</p></div>
+    <div class="budget-hero"><small>三个主行程 · 常规成人基础门票合计</small><strong>¥<span id="basicTicketTotal">44</span></strong><span>不含交通、餐饮、自选展馆与景区活动票。<br>如选颐和园联票，需额外计入差价。</span></div>
+  </div>
+  <div class="guide-callout"><strong>✦ 10月31日行程小提醒</strong><span>确认精神和体力 · 打开「畅游公园」看景山当天票 · 记得16:00左右上景山，10月31日日落约17:13。</span></div>
+  <div class="trip-tabs" id="tripTabs" role="tablist" aria-label="选择出行日期"></div>
+  <div class="trip-detail" id="tripDetail" role="tabpanel" aria-live="polite"></div>
+  <div class="section-head inside-head"><div><div class="section-kicker">ATTRACTION NOTES / OFFICIAL SOURCES</div><h2>景点档案 · 门票和预约。</h2></div><div class="section-note">每处有官方信息与高德地图入口<br>点击可打开对应网站</div></div>
+  <div class="place-tools"><label class="search-wrap">⌕ <input type="search" id="placeSearch" placeholder="搜索景点 / 门票 / 预约…" aria-label="搜索景点" /></label><div class="filter-chips" id="placeFilters"><button type="button" class="selected" data-filter="all">全部</button><button type="button" data-filter="paid">需买票</button><button type="button" data-filter="free">免费散步</button><button type="button" data-filter="optional">备选</button></div></div>
+  <div class="place-grid" id="placeGrid"></div>
+  <div class="section-head inside-head"><div><div class="section-kicker">PACK LIGHT · TRAVEL SMART</div><h2>出发前，最后检查一遍。</h2></div><div class="section-note">勾选状态本地自动保存<br>可以打印为一页随身攻略</div></div>
+  <div class="guide-bottom-grid">
+   <div class="panel pack-card"><h3>随身包包清单</h3><p>带得少一点，才有空间装下这一程的风景。</p><div id="packList" class="pack-list"></div></div>
+   <div class="panel advice-card"><div class="advice-top"><span>NOTES FROM YOUR CITY GUIDE</span><strong>给最后几天的你</strong></div><p>① 刚结束新加坡出差，10月31日只走半日，累了就直接回家。</p><p>② 银杏和红叶是自然景观，颜色取决于气温和风，不能保证每天同样漂亮。</p><p>③ 景山、颐和园等市属公园优先通过官方「畅游公园」购买；五塔寺博物馆看馆方公告。</p><p>④ 个人日记、照片和打勾内容只在这个浏览器，不会自动同步到 GitHub；但网页源文件和预填行程可能在公开仓库被所有人看到。</p><div class="advice-links"><a href="https://www.bjgyol.com.cn" target="_blank" rel="noopener noreferrer">畅游公园 · 官方购票 ↗</a><a href="https://uri.amap.com/search?keyword=%E5%9C%B0%E5%9D%9B%E5%85%AC%E5%9B%AD&city=%E5%8C%97%E4%BA%AC&src=beijing-farewell" target="_blank" rel="noopener noreferrer">高德地图 · 打开示例 ↗</a></div></div>
+  </div>
+  <div class="guide-disclaimer">资料核对于 2026-10-30。开放时间、收费、临时闭园、预约规则可能变更；出发当天再次核对景区官方公告。地图链接打开高德搜索结果，可在地图内选择实时公交、步行或驾车路线；网页不声称提供实时路况。</div>
+ </section>
+ <section class="scrapbook-strip" aria-label="北京秋日原创手帐贴纸">
+   <div class="scrapbook-note"><div class="section-kicker">A LITTLE PAPER SOUVENIR</div><h2>留一页给秋天的贴纸。</h2><p>把金黄的银杏、骑过的胡同、带走的行李，轻轻贴在这本告别日记里。</p><small>这套插画由我专门为你的日记创作，已经内置在网站中。</small></div>
+   <div class="scrapbook-stickers" aria-hidden="true"><img class="scrapbook-gate" src="./assets/sticker-gate.webp" alt="" loading="lazy"/><img class="scrapbook-suitcase" src="./assets/sticker-suitcase.webp" alt="" loading="lazy"/><img class="scrapbook-fireworks" src="./assets/sticker-fireworks.webp" alt="" loading="lazy"/></div>
+ </section>
+ <section class="memory-section" id="memory"><div class="section-head"><div><div class="section-kicker">04 / MY PERSONAL ARCHIVE</div><h2>把平凡的瞬间，变成回忆。</h2></div><div class="section-note">可写日记、加照片和心情<br>记录只保存在你自己的设备上</div></div>
+  <div class="memory-layout"><div class="panel diary-card"><div class="date-eyebrow" id="diaryDayLabel">A PAGE FOR TODAY</div><h3 class="big-day" id="diaryDateTitle" style="font-size:27px">10月31日的日记</h3><label class="input-label">这一天的心情是？</label><div class="moods" id="moodRow"></div><label class="input-label" for="diaryText">写几句给未来的自己</label><textarea id="diaryText" placeholder="今天的风是什么味道？走过哪条街？有什么小小的开心？不想写太多的话，一句话也可以。"></textarea><div class="diary-buttons"><button class="btn" id="saveDiary" type="button">保存这一天 ✧</button><button class="btn ghost" id="addPhotoButton" type="button">＋ 添加照片</button><input class="image-picker" id="photoInput" type="file" accept="image/*" multiple/><span class="hint" id="diarySaveHint" role="status">本地保存 · 只有你看得到</span></div><div class="photo-thumbs" id="photoThumbs"></div></div>
+  <div class="panel archive"><div class="archive-intro"><h3>Memory archive <span style="font-size:12px;color:#9e8477">/ 记忆胶片</span></h3><span id="archiveCount">00 moments</span></div><div class="archive-grid" id="archiveGrid"></div><div style="margin-top:auto;padding-top:22px;font-size:10px;line-height:1.8;color:var(--muted)">✦ 不需要每一天都闪闪发光。有些值得珍藏的，只是当时很普通的一阵风。</div></div></div>
+ </section>
+ <section class="wish-section" id="wishes"><div class="section-head"><div><div class="section-kicker">05 / BEFORE I LEAVE</div><h2>写给北京的最后一张清单。</h2></div><div class="section-note">全都完成，会解锁一场烟花 ✷</div></div>
+ <div class="panel wish-panel"><div class="wish-intro"><h3>一些不为工作，<br>只为自己的小心愿。</h3><p>不必每件都做到。愿最后几天，不只有离职手续和行李箱，也有你想好好记住的自己。</p><button class="btn ghost" id="wishFireworks" type="button">✦ 小小的庆祝</button></div><div><div class="wish-list" id="wishList"></div><form class="wish-add" id="addWishForm"><label class="sr-only" for="wishInput">添加心愿</label><input id="wishInput" maxlength="120" placeholder="再加一个属于自己的小心愿…" required/><button type="submit">＋ 加入清单</button></form></div></div>
+ </section>
+ <div class="panorama-art" role="img" aria-label="原创北京秋日天际线插画：银杏、胡同、宫墙和远处的北京城市轮廓"></div>
+ <footer class="footer"><div><strong>Every ending is also a beginning.</strong><p>北京秋天的最后几页，写在这里。<br>✳ 数据仅保存在本机浏览器；记得定期导出备份，换设备不会自动同步。</p></div><div class="footer-buttons"><button type="button" id="exportBackup">↓ 导出完整备份</button><button type="button" id="importBackup">↑ 导入备份</button><input id="importFile" type="file" accept="application/json,.json" hidden/><button type="button" id="changeDate">⚙ 修改离职日期</button><button type="button" id="printBook">▤ 打印纪念册</button></div></footer>
+</main>
+<div class="modal-shade" id="modalShade" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h3 id="modalTitle">编辑内容</h3><button type="button" class="iconbtn" id="modalClose" aria-label="关闭弹窗">×</button></div><form id="modalForm"><div id="modalFields"></div><div class="modal-buttons"><button type="button" id="modalCancel">取消</button><button type="submit" class="primary">保存修改</button></div></form></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script defer src="./app.js"></script>
+</body>
+</html>
