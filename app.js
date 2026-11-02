@@ -38,7 +38,14 @@ const initEvents=[
 const initialWishes=['留一张有自己的银杏照片','逛一条喜欢的胡同，买一件小纪念品','坐在公园的长椅上，不看工作消息','在一间阳光咖啡馆写一页手帐','再吃一次喜欢的北京味道','写一封信给下一程的自己'].map((t,i)=>({id:'w'+i,text:t,done:false}));
 const initial={departure:'2026-11-09',notice:'2026-11-05',selected:'2026-10-31',calendarMonth:'2026-11',tasks:initTasks,events:initEvents,wishes:initialWishes,diaries:{},guideChecks:{},guideNotes:{},theme:'classic'};
 function load(){try{const a=JSON.parse(localStorage.getItem(STORE)||'null');if(a&&Array.isArray(a.tasks)&&Array.isArray(a.events))return {...structuredClone(initial),...a};}catch(e){}return structuredClone(initial)}
-let state=load();let modalSubmit=null;let toastTimer;
+// On every new page load, open the current day in Beijing (UTC+8).
+// This intentionally overrides an older saved selection, but preserves all tasks,
+// diary entries, photos and other user edits in localStorage.
+let state=load();
+let lastSeenBeijingDay=beijingToday();
+state.selected=lastSeenBeijingDay;
+state.calendarMonth=lastSeenBeijingDay.slice(0,7);
+let modalSubmit=null;let toastTimer;
 const $=id=>document.getElementById(id);const escapeHTML=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function makeId(){return 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function save(){try{localStorage.setItem(STORE,JSON.stringify(state));return true}catch(e){toast('浏览器存储空间不足，请先导出备份并减少照片。');return false}}
@@ -100,6 +107,20 @@ $('writeDay').onclick=()=>$('memory').scrollIntoView({behavior:'smooth',block:'s
 async function compress(file){return await new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=()=>reject(new Error('读取图片失败'));r.onload=()=>{const img=new Image();img.onerror=()=>reject(new Error('无法处理图片'));img.onload=()=>{let w=img.width,h=img.height,max=1050,s=Math.min(1,max/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement('canvas');c.width=w;c.height=h;let g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,w,h);g.drawImage(img,0,0,w,h);let quality=.72;let result=c.toDataURL('image/jpeg',quality);if(result.length>320000)result=c.toDataURL('image/jpeg',.52);resolve(result)};img.src=r.result};r.readAsDataURL(file)})}
 $('photoInput').addEventListener('change',async e=>{const files=Array.from(e.target.files||[]).filter(x=>x.type.startsWith('image/')).slice(0,8);if(!files.length)return;let added=0;for(const file of files){try{const data=await compress(file),j=diaryFor(state.selected);j.photos.push({id:makeId(),name:file.name.slice(0,70),data});if(!save()){j.photos.pop();break}added++}catch(err){toast('有图片未能添加：'+err.message)}}e.target.value='';renderDiary();stats();if(added)toast('已收藏 '+added+' 张照片 ✧ （别忘了导出备份）')});$('photoThumbs').addEventListener('click',e=>{const b=e.target.closest('[data-photo-remove]');if(!b)return;if(confirm('确认删除这张照片吗？')){diaryFor(state.selected).photos=diaryFor(state.selected).photos.filter(x=>x.id!==b.dataset.photoRemove);save();renderDiary();stats()}});$('archiveGrid').addEventListener('click',e=>{const b=e.target.closest('[data-archive-day]');if(b){selectDay(b.dataset.archiveDay);$('memory').scrollIntoView({behavior:'smooth',block:'start'})}});
 $('wishList').addEventListener('click',e=>{const checkbox=e.target.closest('[data-wish-done]');if(checkbox){const w=state.wishes.find(w=>w.id===checkbox.dataset.wishDone);if(w){w.done=checkbox.checked;save();renderWishes();stats();if(w.done){burst(innerWidth*.55,innerHeight*.5,40);if(state.wishes.length&&state.wishes.every(x=>x.done))setTimeout(fireworks,430)}}return}const edit=e.target.closest('[data-wish-edit]');if(edit){const w=state.wishes.find(x=>x.id===edit.dataset.wishEdit),value=prompt('修改这个心愿：',w.text);if(value!==null&&value.trim()){w.text=value.trim().slice(0,120);save();renderWishes()}return}const remove=e.target.closest('[data-wish-remove]');if(remove&&confirm('确定删除这条心愿吗？')){state.wishes=state.wishes.filter(x=>x.id!==remove.dataset.wishRemove);save();renderWishes();stats()}});$('addWishForm').addEventListener('submit',e=>{e.preventDefault();const t=$('wishInput').value.trim();if(!t)return;state.wishes.push({id:makeId(),text:t,done:false});$('wishInput').value='';save();renderWishes();stats();toast('为自己新增一个小小愿望')});
-$('celebrateButton').onclick=fireworks;$('wishFireworks').onclick=fireworks;$('exportBackup').onclick=()=>download('Beijing_Farewell_Diary_Backup_'+beijingToday()+'.json',JSON.stringify({...state,backupVersion:1,exportedAt:new Date().toISOString()},null,2),'application/json;charset=utf-8');$('importBackup').onclick=()=>$('importFile').click();$('importFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const raw=JSON.parse(await file.text());if(!validImport(raw))throw Error('备份格式不正确');if(!confirm('导入会覆盖这个浏览器中目前的日记、任务、照片和心愿，确定继续？'))return;state={...structuredClone(initial),...raw};if(!save())return;renderAll();toast('完整备份已导入 ✦')}catch(err){toast('导入失败：'+err.message)}finally{e.target.value=''}});$('printBook').onclick=()=>window.print();
+$('celebrateButton').onclick=fireworks;$('wishFireworks').onclick=fireworks;$('exportBackup').onclick=()=>download('Beijing_Farewell_Diary_Backup_'+beijingToday()+'.json',JSON.stringify({...state,backupVersion:1,exportedAt:new Date().toISOString()},null,2),'application/json;charset=utf-8');$('importBackup').onclick=()=>$('importFile').click();$('importFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{const raw=JSON.parse(await file.text());if(!validImport(raw))throw Error('备份格式不正确');if(!confirm('导入会覆盖这个浏览器中目前的日记、任务、照片和心愿，确定继续？'))return;state={...structuredClone(initial),...raw};state.selected=beijingToday();state.calendarMonth=state.selected.slice(0,7);lastSeenBeijingDay=state.selected;if(!save())return;renderAll();toast('完整备份已导入 ✦')}catch(err){toast('导入失败：'+err.message)}finally{e.target.value=''}});$('printBook').onclick=()=>window.print();
+// When a browser tab is left open overnight, follow Beijing's new day too.
+// Manual date browsing remains available until the day actually changes.
+function syncBeijingDay(){
+  const today=beijingToday();
+  if(today===lastSeenBeijingDay)return;
+  lastSeenBeijingDay=today;
+  state.selected=today;
+  state.calendarMonth=today.slice(0,7);
+  save();
+  renderAll();
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncBeijingDay()});
+window.addEventListener('focus',syncBeijingDay);
+setInterval(syncBeijingDay,60000);
 renderAll();
 })();
